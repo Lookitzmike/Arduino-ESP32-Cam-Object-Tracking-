@@ -1,2 +1,5 @@
-# Arduino ESP32 Cam Object Tracking 
- 
+# Arduino-ESP32-Object-Detection
+
+ESP32 Camera Webserver
+Tensorflow Object detection algo 
+servo motor for pan and tilt 

@@ -4,7 +4,6 @@
 
 #include "camera_pins.h"
 
-const char* ssid = "ML_We-fee 2.4GHz";      //replace with your wifi ssid
 const char* ssid = "Wifi ID here";
 const char* password = "Enter password here";
 

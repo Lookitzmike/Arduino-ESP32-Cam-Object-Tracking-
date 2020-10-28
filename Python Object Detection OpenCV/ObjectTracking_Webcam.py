@@ -31,6 +31,6 @@ while True:
     cv.putText(img, ("FPS: " + str(int(fps))), (10,20), cv.FONT_HERSHEY_SIMPLEX , .5, (247, 67, 49), 2)   
     cv.imshow("Python OpenCV Object Tracking", img)     # Title of window 
 
-    if cv.waitKey(1) & 0xff == ord('q'):                # Quit Program if q is pressed
-        break
-
+    if cv.waitKey(1) == ord('q'):                # Quit Program if q is pressed
+            cv.destroyAllWindows()
+            break

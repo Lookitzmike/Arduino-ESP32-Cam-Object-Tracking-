@@ -4,9 +4,10 @@ import win32gui, win32ui, win32con
 
 class WindowCapture:
     # Properties
-    width = 0 
-    height = 0  
+    width, height = 0, 0
     window_Handle = None        # Ref. properties with self
+    title_pixels, border_pixels = 0, 0
+    crop_x, crop_y = 0, 0
 
     # Constructor
     def __init__(self, window_name):
@@ -14,10 +15,19 @@ class WindowCapture:
         if not self.window_Handle:                                      # Exception if window not found
             raise Exception('Window not found: {}'.format(window_name))
         
-        window_rect = win32gui.GetWindowRect(self.window_Handle)        # Get window size and resize to fit
+        # Get window size and resize to fit
+        window_rect = win32gui.GetWindowRect(self.window_Handle)
         self.width = window_rect[2] - window_rect[0]
         self.height = window_rect[3] - window_rect[1]
-
+        
+        # Cut the title border and the side borders to fit the screen and also increase frame rates with lower resolution
+        border_pixels = 8        
+        title_pixels = 30
+        self.width = self.width - (border_pixels * 2)
+        self.height = self.height - title_pixels - border_pixels
+        self.crop_x = border_pixels
+        self.crop_y = title_pixels
+        
     def get_screenshot(self):
         # Get window image
         wDC = win32gui.GetWindowDC(self.window_Handle)
@@ -26,7 +36,7 @@ class WindowCapture:
         dataBitMap = win32ui.CreateBitmap()
         dataBitMap.CreateCompatibleBitmap(dcObj, self.width, self.height)
         cDC.SelectObject(dataBitMap)
-        cDC.BitBlt((0, 0), (self.width, self.height) , dcObj, (8, 30), win32con.SRCCOPY)
+        cDC.BitBlt((0, 0), (self.width, self.height) , dcObj, (self.crop_x, self.crop_y), win32con.SRCCOPY)
 
         # Convery data so opencv can read
         signedIntsArray = dataBitMap.GetBitmapBits(True)

@@ -8,6 +8,7 @@ class WindowCapture:
     window_Handle = None        # Ref. properties with self
     title_pixels, border_pixels = 0, 0
     crop_x, crop_y = 0, 0
+    offset_x, offset_y = 0, 0
 
     # Constructor
     def __init__(self, window_name):
@@ -53,3 +54,6 @@ class WindowCapture:
         screenshot = np.ascontiguousarray(screenshot)   # Make image contiguous 
 
         return screenshot
+
+    def get_screen_position(self, pos):                 # Calculate offset position on first run, don't move window when script starts or offset will be off
+        return(pos[0] + self.offset_x, pos[1] + self.offset_y)  

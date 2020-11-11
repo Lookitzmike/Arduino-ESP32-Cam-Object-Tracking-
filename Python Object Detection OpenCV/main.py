@@ -7,7 +7,7 @@ from window_capture import WindowCapture
 previous_time = 0                                   # Use for FPS
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-window_capture_name = WindowCapture("Python Object Detection OpenCV")
+window_capture_name = WindowCapture("ESP32 OV2460 - Google Chrome")
 
 while True:                                         # While loop to display frames so that it is like a video    
     screenshot = window_capture_name.get_screenshot()                   # Take a screenshot using  window capture from win32 lib

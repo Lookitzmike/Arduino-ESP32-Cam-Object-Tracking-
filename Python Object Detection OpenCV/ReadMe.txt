@@ -1,7 +1,8 @@
-Libraries needed:
-    opencv-python
-    opencv-contrib-python
-    
+Libraries needed: Use pip install
+    >> opencv-python
+    >> opencv-contrib-python
+    >> pywin32
+    >> pywinauto
 
 OpenCV Trackers Available:
     KCF     - Fast Tracking can handle slow FPS
@@ -23,3 +24,7 @@ To Do: Screen capture
     >> 
     >> 
     >> 
+
+Note to self:
+    >> Origin = 960, 540 on a 1920 x 1080 display image
+    >> Top left (x, y) = 0 || Bottom right (x = 1919, y = 1079)

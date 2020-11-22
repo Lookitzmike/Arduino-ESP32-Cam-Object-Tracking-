@@ -11,11 +11,14 @@ class WindowCapture:
     offset_x, offset_y = 0, 0
 
     # Constructor
-    def __init__(self, window_name):
-        self.window_Handle = win32gui.FindWindow(None, window_name)     # Capture a specific window
-        if not self.window_Handle:                                      # Exception if window not found
-            raise Exception('Window not found: {}'.format(window_name))
-        
+    def __init__(self, window_name=None):           # Change to none to capture entire screen instead 
+        if window_name is None:
+            self.window_Handle = win32gui.GetDesktopWindow()
+        else:
+            self.window_Handle = win32gui.FindWindow(None, window_name)     # Capture a specific window. Does not work correctly atm
+            if not self.window_Handle:                                      # Exception if window not found
+                raise Exception('Window not found: {}'.format(window_name))
+            
         # Get window size and resize to fit
         window_rect = win32gui.GetWindowRect(self.window_Handle)
         self.width = window_rect[2] - window_rect[0]

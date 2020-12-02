@@ -14,7 +14,7 @@ OpenCV Trackers Available:
     BOOSTING
     MIL
 
-To Do: Screen capture_ Date: 11/11/2020
+To Do: Screen capture_ Date: 12/02/2020
     >> Currently detection only has a single needle image, unable to detect if object is in a different position or shape
-    >> Need to find a way to transfer data to arduino
-    >> 
+    >> Optimize fps 
+    >> Finish arduino to python code

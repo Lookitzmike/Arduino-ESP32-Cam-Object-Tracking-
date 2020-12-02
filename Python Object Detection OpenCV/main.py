@@ -4,6 +4,7 @@ import os
 from time import time
 from window_capture import WindowCapture
 from tracking import tracking
+from HSV_filter import HSV_datastruct
 
 previous_time = 0                                       # Use for FPS
 os.chdir(os.path.dirname(os.path.abspath(__file__)))    # Change working dir to current folder
@@ -22,8 +23,11 @@ while True:                                         # While loop to display fram
     cv.putText(screenshot, ("FPS: " + str(int(fps))), (10,20), cv.FONT_HERSHEY_SIMPLEX , .5, (0, 0, 255), 1)   
     #cv.imshow('ScreenCapture', screenshot)          # Create window and display screenshot
 
-    track_obj = tracking_Needle_img.find_pos(screenshot, 0.6)                   # Detection
-    output_img = tracking_Needle_img.draw_rectangles(screenshot, track_obj)    # Output detection box
+    # Pre-processing image to increase frames
+    output_img = tracking_Needle_img.apply_HSV_filter(screenshot)
+
+    #track_obj = tracking_Needle_img.find_pos(screenshot, 0.5)                  # Detection
+    #output_img = tracking_Needle_img.draw_rectangles(screenshot, track_obj)    # Output detection box
 
     cv.imshow('Matches', output_img)
 

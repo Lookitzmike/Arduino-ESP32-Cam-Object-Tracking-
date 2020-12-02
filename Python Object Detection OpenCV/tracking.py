@@ -1,24 +1,10 @@
 import cv2 as cv
 import numpy as np
-
+from HSV_filter import HSV_datastruct
 
 class tracking:
     # Constant
     window_capture_trackbar  = "Trackbars"
-    max_value = 255
-    max_value_H = 179
-    low_H = 0
-    low_S = 0
-    low_V = 0
-    high_H = 0
-    high_S = 0
-    high_V = 0
-    low_H_name = 'Low H'
-    low_S_name = 'Low S'
-    low_V_name = 'Low V'
-    high_H_name = 'High H'
-    high_S_name = 'High S'
-    high_V_name = 'High V'
 
     # Properties
     needle_img = None
@@ -71,7 +57,7 @@ class tracking:
     # https://docs.opencv.org/4.2.0/da/d97/tutorial_threshold_inRange.html
     def init_control_gui(self):
         cv.namedWindow(self.window_capture_trackbar, cv.WINDOW_NORMAL)  # Create window to display the default frame and threshold frame
-        cv.resizeWindow(self.window_capture_trackbar, 400, 400)         # Resize window
+        cv.resizeWindow(self.window_capture_trackbar, 350, 750)         # Resize window
 
         # cv.createTrackbar requires a callback to update params
         # This is not needed in this case because we will be using getTrackbarPos() instead
@@ -80,19 +66,71 @@ class tracking:
 
         # Create trackbars to set range of HSV values
         # OpenCV scale for HSV: H=0-179, S=0-255, V=0-255
-        cv.createTrackbar(self.low_H_name, self.window_capture_trackbar , self.low_H, self.max_value_H, nothing)
-        cv.createTrackbar(self.low_S_name, self.window_capture_trackbar , self.low_S, self.max_value, nothing)
-        cv.createTrackbar(self.low_V_name, self.window_capture_trackbar , self.low_V, self.max_value, nothing)
+        cv.createTrackbar('H_min', self.window_capture_trackbar , 0, 179, nothing)
+        cv.createTrackbar('S_min', self.window_capture_trackbar , 0, 255, nothing)
+        cv.createTrackbar('V_min', self.window_capture_trackbar , 0, 255, nothing)
 
-        cv.createTrackbar(self.high_H_name, self.window_capture_trackbar , self.high_H, self.max_value_H, nothing)
-        cv.createTrackbar(self.high_S_name, self.window_capture_trackbar , self.high_S, self.max_value, nothing)
-        cv.createTrackbar(self.high_V_name, self.window_capture_trackbar , self.high_V, self.max_value, nothing)
+        cv.createTrackbar('H_max', self.window_capture_trackbar , 0, 179, nothing)
+        cv.createTrackbar('S_max', self.window_capture_trackbar , 0, 255, nothing)
+        cv.createTrackbar('V_max', self.window_capture_trackbar , 0, 255, nothing)
         # Set default value for Max HSV trackbars
-        cv.setTrackbarPos(self.high_H_name, self.window_capture_trackbar, self.max_value_H)
-        cv.setTrackbarPos(self.high_S_name, self.window_capture_trackbar, self.max_value)
-        cv.setTrackbarPos(self.high_V_name, self.window_capture_trackbar, self.max_value)
+        cv.setTrackbarPos('H_max', self.window_capture_trackbar, 179)
+        cv.setTrackbarPos('S_max', self.window_capture_trackbar, 255)
+        cv.setTrackbarPos('V_max', self.window_capture_trackbar, 255)
         # Trackbar for increasing and decreasing saturation and value
-        cv.createTrackbar('Sat_add', self.window_capture_trackbar , 0, self.max_value, nothing)
-        cv.createTrackbar('Sat_sub', self.window_capture_trackbar , 0, self.max_value, nothing)
-        cv.createTrackbar('Value_add', self.window_capture_trackbar , 0, self.max_value, nothing)
-        cv.createTrackbar('Value_sub', self.window_capture_trackbar , 0, self.max_value, nothing)
+        cv.createTrackbar('Sat_add', self.window_capture_trackbar , 0, 255, nothing)
+        cv.createTrackbar('Sat_sub', self.window_capture_trackbar , 0, 255, nothing)
+        cv.createTrackbar('Value_add', self.window_capture_trackbar , 0, 255, nothing)
+        cv.createTrackbar('Value_sub', self.window_capture_trackbar , 0, 255, nothing)
+
+    # Return an HSV filter object based on the control values
+    def get_HSV_filter(self):
+        hsvFilter = HSV_datastruct()
+        hsvFilter.H_min = cv.getTrackbarPos('H_min', self.window_capture_trackbar)
+        hsvFilter.S_min = cv.getTrackbarPos('S_min', self.window_capture_trackbar)
+        hsvFilter.V_min = cv.getTrackbarPos('V_min', self.window_capture_trackbar)
+        hsvFilter.H_max = cv.getTrackbarPos('H_max', self.window_capture_trackbar)
+        hsvFilter.S_max = cv.getTrackbarPos('S_max', self.window_capture_trackbar)
+        hsvFilter.V_max = cv.getTrackbarPos('V_max', self.window_capture_trackbar)
+        hsvFilter.Sat_add = cv.getTrackbarPos('Sat_add', self.window_capture_trackbar)
+        hsvFilter.Sat_sub = cv.getTrackbarPos('Sat_sub', self.window_capture_trackbar)
+        hsvFilter.Value_add = cv.getTrackbarPos('Value_add', self.window_capture_trackbar)
+        hsvFilter.Value_sub = cv.getTrackbarPos('Value_sub', self.window_capture_trackbar)
+        return hsvFilter
+    
+    # Send image through filter and apply the filter values 
+    def apply_HSV_filter(self, og_img, hsvFilter=None):
+        hsv = cv.cvtColor(og_img, cv.COLOR_BGR2HSV)         # Convert image color from BGR to HSV
+        if not hsvFilter:               # If no defined filter then use filter value from GUI
+            hsvFilter = self.get_HSV_filter()
+
+        # Add/subtract saturation and value 
+        h, s, v = cv.split(hsv)         # Split HSV value
+        s = self.shift_pixel_value(s, hsvFilter.Sat_add)
+        s = self.shift_pixel_value(s, -hsvFilter.Sat_sub)
+        v = self.shift_pixel_value(v, hsvFilter.Value_add)
+        v = self.shift_pixel_value(v, -hsvFilter.Value_sub)
+        hsv = cv.merge([h, s, v])       # Merge the split values back to a HSV image
+
+        # Set min max HSV value to display
+        lower = np.array([hsvFilter.H_min, hsvFilter.S_min, hsvFilter.V_min])
+        upper = np.array([hsvFilter.H_max, hsvFilter.S_max, hsvFilter.V_max])
+        # Apply threshold
+        mask = cv.inRange(hsv, lower, upper)    # Check to see if array element lies inbetween the two other arrays
+        result = cv.bitwise_and(hsv, hsv, mask=mask)    # Returns black or white image based on if pixels are lower or higher than the threshold
+        img = cv.cvtColor(result, cv.COLOR_HSV2BGR)
+        return img
+
+    # Shift HSV pixel values in python using Numpy
+    # https://stackoverflow.com/questions/49697363/shifting-hsv-pixel-values-in-python-using-numpy
+    def shift_pixel_value(self, c, amount):
+        if amount > 0:
+            lim = 255 - amount
+            c[c >= lim] = 255
+            c[c < lim] += amount
+        elif amount < 0:
+            amount = -amount
+            lim = amount
+            c[c <= lim] = 0
+            c[c > lim] -= amount
+        return c

@@ -11,6 +11,8 @@ window_capture_name = WindowCapture()               # Window Capture None = desk
 
 tracking_Needle_img = tracking('Ball.jpg')                # Needle image, change image for different tracking
 
+tracking_Needle_img.init_control_gui()
+
 while True:                                         # While loop to display frames so that it is like a video    
     screenshot = window_capture_name.get_screenshot()                   # Take a screenshot using  window capture from win32 lib
     

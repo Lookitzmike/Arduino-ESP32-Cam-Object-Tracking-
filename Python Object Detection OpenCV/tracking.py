@@ -1,6 +1,6 @@
 import cv2 as cv
 import numpy as np
-from HSV_filter import HSV_datastruct
+from HSV_filter import HSV_filter
 
 class tracking:
     # Constant
@@ -23,11 +23,14 @@ class tracking:
         # Methods: Different Object Detection methods: https://docs.opencv.org/4.0.1/df/dfb/group__imgproc__object.html#ga3a7850640f1fe1f58fe91a2d7583695d
         self.method = method    # Change in methods through constructor above. 
 
-    def find_pos(self, haystack_img, threshold=0.5):
+    def find_pos(self, haystack_img, threshold=0.5, max_results=10):
         result = cv.matchTemplate(haystack_img, self.needle_img, self.method)       # Run algorithm
         
         locations = np.where(result >= threshold)                                   # Get position from match results
         locations = list(zip(*locations[::-1]))
+
+        if not locations:   # Reshape empty arrays because empty array when concatenating can cause error 
+            return np.array([], dtype=np.int32).reshape(0, 4)
 
         rectangles = []
         for loc in locations:
@@ -38,6 +41,12 @@ class tracking:
         # Group rectangles so they combine to similar size and location, otherwise the rectangle will be thick
         # https://docs.opencv.org/3.4/d5/d54/group__objdetect.html
         rectangles, weights = cv.groupRectangles(rectangles, groupThreshold=1, eps=0.5) 
+        #print(rectangles)
+
+        if len(rectangles) > max_results:       # Can crash program if too many results
+            print('Too many results, increase threshold')
+            rectangles = rectangles[:max_results]
+
         return rectangles
 
     # Pass (x, y, w, h) params to draw rectangles: Reference ObjectTracking_Webcam.py file  
@@ -57,7 +66,7 @@ class tracking:
     # https://docs.opencv.org/4.2.0/da/d97/tutorial_threshold_inRange.html
     def init_control_gui(self):
         cv.namedWindow(self.window_capture_trackbar, cv.WINDOW_NORMAL)  # Create window to display the default frame and threshold frame
-        cv.resizeWindow(self.window_capture_trackbar, 350, 750)         # Resize window
+        cv.resizeWindow(self.window_capture_trackbar, 350, 700)         # Resize window
 
         # cv.createTrackbar requires a callback to update params
         # This is not needed in this case because we will be using getTrackbarPos() instead
@@ -80,12 +89,12 @@ class tracking:
         # Trackbar for increasing and decreasing saturation and value
         cv.createTrackbar('Sat_add', self.window_capture_trackbar , 0, 255, nothing)
         cv.createTrackbar('Sat_sub', self.window_capture_trackbar , 0, 255, nothing)
-        cv.createTrackbar('Value_add', self.window_capture_trackbar , 0, 255, nothing)
-        cv.createTrackbar('Value_sub', self.window_capture_trackbar , 0, 255, nothing)
+        cv.createTrackbar('Bright_add', self.window_capture_trackbar , 0, 255, nothing)
+        cv.createTrackbar('Bright_sub', self.window_capture_trackbar , 0, 255, nothing)
 
     # Return an HSV filter object based on the control values
     def get_HSV_filter(self):
-        hsvFilter = HSV_datastruct()
+        hsvFilter = HSV_filter()
         hsvFilter.H_min = cv.getTrackbarPos('H_min', self.window_capture_trackbar)
         hsvFilter.S_min = cv.getTrackbarPos('S_min', self.window_capture_trackbar)
         hsvFilter.V_min = cv.getTrackbarPos('V_min', self.window_capture_trackbar)
@@ -94,8 +103,8 @@ class tracking:
         hsvFilter.V_max = cv.getTrackbarPos('V_max', self.window_capture_trackbar)
         hsvFilter.Sat_add = cv.getTrackbarPos('Sat_add', self.window_capture_trackbar)
         hsvFilter.Sat_sub = cv.getTrackbarPos('Sat_sub', self.window_capture_trackbar)
-        hsvFilter.Value_add = cv.getTrackbarPos('Value_add', self.window_capture_trackbar)
-        hsvFilter.Value_sub = cv.getTrackbarPos('Value_sub', self.window_capture_trackbar)
+        hsvFilter.Bright_add = cv.getTrackbarPos('Bright_add', self.window_capture_trackbar)
+        hsvFilter.Bright_sub = cv.getTrackbarPos('Bright_sub', self.window_capture_trackbar)
         return hsvFilter
     
     # Send image through filter and apply the filter values 
@@ -108,8 +117,8 @@ class tracking:
         h, s, v = cv.split(hsv)         # Split HSV value
         s = self.shift_pixel_value(s, hsvFilter.Sat_add)
         s = self.shift_pixel_value(s, -hsvFilter.Sat_sub)
-        v = self.shift_pixel_value(v, hsvFilter.Value_add)
-        v = self.shift_pixel_value(v, -hsvFilter.Value_sub)
+        v = self.shift_pixel_value(v, hsvFilter.Bright_add)
+        v = self.shift_pixel_value(v, -hsvFilter.Bright_sub)
         hsv = cv.merge([h, s, v])       # Merge the split values back to a HSV image
 
         # Set min max HSV value to display

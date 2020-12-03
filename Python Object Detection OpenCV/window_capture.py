@@ -32,6 +32,9 @@ class WindowCapture:
         self.crop_x = border_pixels
         self.crop_y = title_pixels
         
+        self.offset_x = window_rect[0] + self.crop_x
+        self.offset_y = window_rect[1] + self.crop_y
+
     def get_screenshot(self):
         # Get window image
         wDC = win32gui.GetWindowDC(self.window_Handle)

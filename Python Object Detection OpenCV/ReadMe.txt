@@ -14,7 +14,14 @@ OpenCV Trackers Available:
     BOOSTING
     MIL
 
+OpenCV Detection Method:
+    cv.TM_SQDIFF
+    cv.TM_SQDIFF_NORMED
+    cv.TM_CCORR
+    cv.TM_CCOEFF_NORMED     << Using this one
+    cv.TM_CCOEFF
+    cv.TM_CCOEFF_NORMED
+
 To Do: Screen capture_ Date: 12/02/2020
-    >> Currently detection only has a single needle image, unable to detect if object is in a different position or shape
-    >> Optimize fps 
+    >> Machine learning, training with cascade classifier
     >> Finish arduino to python code

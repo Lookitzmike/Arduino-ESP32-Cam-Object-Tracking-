@@ -1,21 +1,32 @@
-#define LED 2
+#include <Servo.h>
+#define DELAY 100
+
+Servo servoX;
 String InBytes;
+String var;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(LED, OUTPUT);
+  servoX.attach(3);
+  servoX.write(90);
+
 }
 
 void loop() {
   if (Serial.available() > 0) {
     InBytes = Serial.readStringUntil('\n');
-    if (InBytes == "on") {
-      digitalWrite(LED, HIGH);
-      Serial.println("LED ON");
+    var = InBytes;
+    if (InBytes == "right") {
+      servoX.write(0);
+      delay(DELAY);
     }
-    if (InBytes == "off") {
-      digitalWrite(LED, LOW);
-      Serial.println("LED OFF");
+    else if (InBytes == "left") {
+      servoX.write(180);      
+      delay(DELAY);
+    }
+    else if (InBytes == "middle") {
+      servoX.write(90);      
+      delay(DELAY);
     }
   }
 }

@@ -1,6 +1,10 @@
 import cv2 as cv
 import numpy as np
+import serial
 from HSV_filter import HSV_filter
+
+serialcomm = serial.Serial('COM3', 9600)    # Change port to whatever arduino connected to
+serialcomm.timeout = 1
 
 class tracking:
     # Constant
@@ -11,6 +15,7 @@ class tracking:
     needle_width = 0
     needle_height = 0
     method = None
+
 
     # Constructor
     def __init__(self, needle_img_path, method=cv.TM_CCOEFF_NORMED):
@@ -51,6 +56,7 @@ class tracking:
 
     # Pass (x, y, w, h) params to draw rectangles: Reference ObjectTracking_Webcam.py file  
     def draw_rectangles(self, haystack_img, rectangles):
+        track_pos_X, track_pos_Y = 0, 0
         # https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#gaf076ef45de481ac96e0ab3dc2c29a777
         line_color = (0, 0, 255)    # BGR color, 0,0,255 for red box
         line_type = cv.LINE_4       # Line type 4 = 4 connected lines
@@ -60,6 +66,22 @@ class tracking:
             top_left = (x, y)
             bottom_right = (x + w, y + h)
             cv.rectangle(haystack_img, top_left, bottom_right, line_color, lineType = line_type)    # Draw box
+            track_pos_X = top_left[0]                           # Center pos = 910     left = >900, right = <900
+            track_pos_Y = top_left[1]                           # Center pos = 320     Up = >320, Down = <320
+        #print(track_pos_X, track_pos_Y)
+
+        if (track_pos_X > 920):
+            temp = 1
+            serialcomm.write(str(chr(temp)).encode())          # Conver decimal to ASCII 
+            print(temp)
+        elif (track_pos_X < 900):
+            temp = 2
+            serialcomm.write(str(chr(temp)).encode())
+            print(temp)
+        elif (track_pos_X in range(900, 920)):
+            temp = 3
+            serialcomm.write(str(chr(temp)).encode())
+            print(temp)
         return haystack_img
 
     # Create GUI window with controls for adjusting color conversion in real-time: code copied from OpenCV tutorial for threshold inRange:

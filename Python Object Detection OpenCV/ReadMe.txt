@@ -22,6 +22,8 @@ OpenCV Detection Method:
     cv.TM_CCOEFF
     cv.TM_CCOEFF_NORMED
 
-To Do: Screen capture_ Date: 12/02/2020
-    >> Machine learning, training with cascade classifier
+To Do: Screen capture_ Date: 12/05/2020
     >> Finish arduino to python code
+    >> Finish server
+
+    >> Skipping machine learning

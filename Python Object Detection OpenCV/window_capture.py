@@ -13,7 +13,7 @@ class WindowCapture:
     # Constructor
     def __init__(self, window_name=None):           # Change to none to capture entire screen instead 
         if window_name is None:
-            self.window_Handle = win32gui.GetDesktopWindow()
+            self.window_Handle = win32gui.GetDesktopWindow()    # Captures the full size of the desktop window Can't figure out how to do 2nd monitor
         else:
             self.window_Handle = win32gui.FindWindow(None, window_name)     # Capture a specific window. Does not work correctly atm
             if not self.window_Handle:                                      # Exception if window not found

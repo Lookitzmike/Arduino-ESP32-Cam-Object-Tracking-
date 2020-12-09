@@ -9,10 +9,12 @@ from HSV_filter import HSV_filter
 previous_time = 0                                       # Use for FPS
 os.chdir(os.path.dirname(os.path.abspath(__file__)))    # Change working dir to current folder
 
-window_capture_name = WindowCapture()                   # Window Capture None = desktop
+# The smaller the resolution the higher the frame rate use OBS video capture and use windowed projection resize resolution
+# Would need to edit the HSV_filter params again and get a new face needle image
+window_capture_name = WindowCapture("Windowed Projector (Source) - Video Capture Device")  # Window Capture None = desktop 
 
 #tracking_Needle_img = tracking('Ball.jpg')             # Needle image for tracking the red ball in the ball gif
-tracking_Needle_img = tracking('MyFace.jpg')            # Needle image for tracking my face in webcam/stream
+tracking_Needle_img = tracking('MyFace.jpg')            # Needle image for tracking my face in webcam/stream (For a 480x300p resolution)
 
 tracking_Needle_img.init_control_gui()
 
@@ -29,7 +31,7 @@ Replace the 'MyFace.jpg' with the name of your needle image
 
 # Ball HSV filter value
 #hsvfilter_data = HSV_filter(0, 57, 145, 26, 255, 255, 0, 0, 0, 40)         # Filter Param for red ball and gif 
-hsvfilter_data = HSV_filter(0, 0, 202, 179, 255, 255, 0, 255, 50, 0)      # Filter Param for camera of my face
+hsvfilter_data = HSV_filter(0, 32, 74, 179, 107, 255, 0, 0, 0, 53)      # Filter Param for camera of my face
 
 while True:                                         # While loop to display frames so that it is like a video    
     screenshot = window_capture_name.get_screenshot()                   # Take a screenshot using  window capture from win32 lib
@@ -47,8 +49,8 @@ while True:                                         # While loop to display fram
     track_obj = tracking_Needle_img.find_pos(processed_img, 0.5)               # Detection
     output_img = tracking_Needle_img.draw_rectangles(screenshot, track_obj)    # Output detection box
 
-    cv.imshow('Processed', processed_img)       # To see the image capture with the hsv filter on for comparison 
-    cv.imshow('Matches', output_img)            # To show the image capture without the filter
+    cv.imshow('HSV_Filter', processed_img)       # To see the image capture with the hsv filter on for comparison 
+    cv.imshow('Capture', output_img)            # To show the image capture without the filter
 
     if cv.waitKey(1) == ord('q'):                   # Quit Program if q is pressed
             cv.destroyAllWindows()

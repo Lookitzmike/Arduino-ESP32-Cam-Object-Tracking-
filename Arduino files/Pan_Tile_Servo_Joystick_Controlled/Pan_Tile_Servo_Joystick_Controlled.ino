@@ -1,8 +1,7 @@
 #include <Servo.h>
 #define DELAY 0.5
 #define buttonPin 2
-#define LED1 6
-#define LED2 7
+#define LED 6
 
 Servo servoX;
 Servo servoY;
@@ -16,11 +15,10 @@ int previousState = 0;    // Past state of button
 
 void setup() {
   pinMode(buttonPin, INPUT);
-  pinMode(LED1, OUTPUT);    // LED indicator that manual is selected
-  pinMode(LED2, OUTPUT);    // LED indicator that Auto is selected
+  pinMode(LED, OUTPUT);    // LED indicator that ON = manual is selected
   servoX.attach(3);
   servoY.attach(4);
-  Serial.begin(9600);
+  Serial.begin(9600);     
 }
 
 void loop() {
@@ -34,12 +32,10 @@ void loop() {
   previousState = currentState;             // Save current state to previous state
   if (buttonCounter % 2 == 0){              // If the buttonCounter value divided by 2 gives no remainder
     serialComm();
-    digitalWrite(LED2, HIGH);
-    digitalWrite(LED1, LOW);
+    digitalWrite(LED, LOW);
   } else {
     joystickControl();
-    digitalWrite(LED2, LOW);
-    digitalWrite(LED1, HIGH);
+    digitalWrite(LED, HIGH);
   }
 }
 

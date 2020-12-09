@@ -1,11 +1,9 @@
-#include "esp_camera.h"
 #include <WiFi.h>
-#define CAMERA_MODEL_AI_THINKER
+#include "esp_camera.h"
+#include "camera_Pins.h"
 
-#include "camera_pins.h"
-
-const char* ssid = "wifi ID";
-const char* password = "password";
+const char* ssid = "*******";      // Change to your WiFi network, needs to be a 2.4GHz network
+const char* password = "*******";         // Change to your WiFi password
 
 void startCameraServer();
 
@@ -36,7 +34,7 @@ void setup() {
   config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
   //init with high specs to pre-allocate larger buffers
-  if(psramFound()){
+  if (psramFound()) {
     config.frame_size = FRAMESIZE_UXGA;
     config.jpeg_quality = 10;
     config.fb_count = 2;
@@ -90,6 +88,5 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
   delay(10000);
 }

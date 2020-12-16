@@ -1,3 +1,4 @@
+# This program is from https://docs.opencv.org/master/d4/dc6/tutorial_py_template_matching.html
 import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
@@ -15,6 +16,7 @@ for x in methods:
     method = eval(x)
     # Apply methods
     res = cv.matchTemplate(img, template, method)
+    # https://docs.opencv.org/master/d2/de8/group__core__array.html#ga8873b86a29c5af51cafdcee82f8150a7
     min_val, max_val, min_loc, max_loc, = cv.minMaxLoc(res)
     if method in [cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]:       # if method is this then take minimum
         top_left = min_loc

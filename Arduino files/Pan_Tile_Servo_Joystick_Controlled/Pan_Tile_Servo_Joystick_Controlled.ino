@@ -18,19 +18,19 @@ void setup() {
   pinMode(LED, OUTPUT);    // LED indicator that ON = manual is selected
   servoX.attach(3);
   servoY.attach(4);
-  Serial.begin(9600);     
+  Serial.begin(9600);
 }
 
 void loop() {
   currentState = digitalRead(buttonPin);    // Read button press
-  if (currentState != previousState){       // If detect button press by comparing the current state with previous
-    if (currentState == HIGH){
-      buttonCounter++;                      // Increment 1 
+  if (currentState != previousState) {      // If detect button press by comparing the current state with previous
+    if (currentState == HIGH) {
+      buttonCounter++;                      // Increment 1
     }
     delay(100);                             // Delay to avoid spamming button
   }
   previousState = currentState;             // Save current state to previous state
-  if (buttonCounter % 2 == 0){              // If the buttonCounter value divided by 2 gives no remainder
+  if (buttonCounter % 2 == 0) {             // If the buttonCounter value divided by 2 gives no remainder
     serialComm();
     digitalWrite(LED, LOW);
   } else {
@@ -39,22 +39,22 @@ void loop() {
   }
 }
 
-void serialComm(){  
+void serialComm() {
   if (Serial.available()) {
     InByte = Serial.parseInt();
     servoX.write(InByte);
     delay(DELAY);
-  }  
+  }
 }
 
-void joystickControl(){
+void joystickControl() {
   pan_X = analogRead(A1);
   pan_X = map(pan_X, 0, 1023, 30, 150);
   servoX.write(pan_X);
   delay(25);
   Serial.print("Pan Deg =  ");
   Serial.print(pan_X);
-  
+
   tilt_Y = analogRead(A2);
   tilt_Y = map(tilt_Y, 0, 1023, 50, 130);
   servoY.write(tilt_Y);

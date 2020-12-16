@@ -1,7 +1,8 @@
 import serial
 import time
 
-serialcomm = serial.Serial('COM3', 9600)    # Change port to whatever arduino connected to
+# Change port to whatever arduino connected to
+serialcomm = serial.Serial('COM3', 9600)
 
 time.sleep(2)
 num = 0
@@ -14,7 +15,7 @@ serialcomm.write(str(num).encode())
 #     if i == 'q':
 #         print("Program Finished")
 #         break
-#     serialcomm.write((i + '\n').encode()) 
+#     serialcomm.write((i + '\n').encode())
 #     time.sleep(0.5)
 #     print(serialcomm.readline().decode('ascii')[:-1])
 # serialcomm.close()

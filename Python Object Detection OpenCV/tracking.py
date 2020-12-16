@@ -3,7 +3,7 @@ import numpy as np
 import serial
 from HSV_filter import HSV_filter
 
-serialcomm = serial.Serial('COM3', 9600)    # Change port to whatever arduino connected to
+# serialcomm = serial.Serial('COM3', 9600)    # Change port to whatever arduino connected to
 
 class tracking:
     # Constant
@@ -75,25 +75,25 @@ class tracking:
         Need to add counter after 200 iterations or 2 seconds it will send 1 number across 
         """
 
-        if (track_pos_X > 240):     # I'm right Camera needs to turn left
-            move_Deg = 120
-            serialcomm.write(str(move_Deg).encode())       
-        # elif (track_pos_Y < 50):   # I'm going up Camera needs to pitch up
-        #     move_Deg = 60
-        #     serialcomm.write(str(move_Deg).encode())  
-        elif (track_pos_X < 230):   # I'm left Camera needs to turn right
-            move_Deg = 60
-            serialcomm.write(str(chr(move_Deg)).encode())
-        # elif (track_pos_Y > 60):   # I'm going down Camera needs to pitch down
+        # if (track_pos_X > 240):     # I'm right Camera needs to turn left
         #     move_Deg = 120
-        #     serialcomm.write(str(move_Deg).encode())
-        elif (track_pos_X in range(230, 240)):  # Center
-            move_Deg = 90
-            serialcomm.write(str(chr(move_Deg)).encode())
-        # elif (track_pos_Y in range(50, 60)):   # Center
+        #     serialcomm.write(str(move_Deg).encode())       
+        # # elif (track_pos_Y < 50):   # I'm going up Camera needs to pitch up
+        # #     move_Deg = 60
+        # #     serialcomm.write(str(move_Deg).encode())  
+        # elif (track_pos_X < 230):   # I'm left Camera needs to turn right
+        #     move_Deg = 60
+        #     serialcomm.write(str(chr(move_Deg)).encode())
+        # # elif (track_pos_Y > 60):   # I'm going down Camera needs to pitch down
+        # #     move_Deg = 120
+        # #     serialcomm.write(str(move_Deg).encode())
+        # elif (track_pos_X in range(230, 240)):  # Center
         #     move_Deg = 90
-        #     serialcomm.write(str(move_Deg).encode())
-        return haystack_img
+        #     serialcomm.write(str(chr(move_Deg)).encode())
+        # # elif (track_pos_Y in range(50, 60)):   # Center
+        # #     move_Deg = 90
+        # #     serialcomm.write(str(move_Deg).encode())
+        # return haystack_img
 
     # Create GUI window with controls for adjusting color conversion in real-time: code copied from OpenCV tutorial for threshold inRange:
     # https://docs.opencv.org/4.2.0/da/d97/tutorial_threshold_inRange.html

@@ -31,11 +31,11 @@ void loop() {
   }
   previousState = currentState;             // Save current state to previous state
   if (buttonCounter % 2 == 0) {             // If the buttonCounter value divided by 2 gives no remainder
-    serialComm();
-    digitalWrite(LED, LOW);
-  } else {
     joystickControl();
     digitalWrite(LED, HIGH);
+  } else {
+    serialComm();
+    digitalWrite(LED, LOW);
   }
 }
 
@@ -43,6 +43,7 @@ void serialComm() {
   if (Serial.available()) {
     InByte = Serial.parseInt();
     servoX.write(InByte);
+    Serial.println(InByte);
     delay(DELAY);
   }
 }

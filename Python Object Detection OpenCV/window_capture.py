@@ -10,6 +10,7 @@ class WindowCapture:
     crop_x, crop_y = 0, 0
     offset_x, offset_y = 0, 0
 
+    # https://docs.microsoft.com/en-us/windows/win32/api/winuser/
     # Constructor
     def __init__(self, window_name=None):           # Change to none to capture entire screen instead 
         if window_name is None:
